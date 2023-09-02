@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProyectoFinal-Paggi Yago</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="style.css"> 
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Proyecto Final</span>
+        </div>
+    </nav>
+    
+    <div class="container text-center">
+
+        <div id="carouselExample" class="carousel slide" style="margin: 20px;">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="./img/billetes.jpeg" class="d-block mx-auto" style="width: 1000px; border-radius: 5%;" alt="1">
+                </div>
+                <div class="carousel-item">
+                    <img src="./img/dolar.jpeg" class="d-block mx-auto" style="width: 1000px; border-radius: 5%;" alt="2">
+                </div>
+                <div class="carousel-item">
+                    <img src="./img/rollo.jpeg" class="d-block mx-auto" style="width: 1000px;  border-radius: 5%;" alt="3">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        
+        
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="btn btn-dark" id="obtenerDatosDolarSi">Obtener Datos Dolar</button>
+                <p id="resultado"></p>
+                
+                <div class="row" id="listaDatosDolarSi"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Dolares</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Obtuviste el valor de los Dolares Actualizado al Instante!,mira debajo...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mostrarDatosDolar = false;
+
+        async function getDatosDolarSi() {
+            try {
+                const response = await fetch("https://www.dolarsi.com/api/api.php?type=valoresprincipales");
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Dolares',data)
+                    return data;
+                } else {
+                    throw new Error("Error al obtener los datos de DolarSi");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                throw error;
+            }
+        }
+
+        function mostrarDatosEnTarjetas(datos) {
+            const listaDatosDolarSi = document.getElementById("listaDatosDolarSi");
+            listaDatosDolarSi.innerHTML = "";
+
+            datos.forEach((dato) => {
+                const card = document.createElement("div");
+                card.className = "col-md-4"; 
+
+                const cardHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${dato.casa.nombre}</h5>
+                            <p class="card-text">Venta: ${dato.casa.venta}</p>
+                        </div>
+                    </div>
+                `;
+
+                card.innerHTML = cardHTML;
+                listaDatosDolarSi.appendChild(card);
+            });
+        }
+
+        const botonObtenerDatosDolarSi = document.getElementById("obtenerDatosDolarSi");
+
+        botonObtenerDatosDolarSi.addEventListener("click", async () => {
+            if (mostrarDatosDolar) {
+                // Si se están mostrando los datos, ocultarlos
+                const listaDatosDolarSi = document.getElementById("listaDatosDolarSi");
+                listaDatosDolarSi.innerHTML = "";
+                botonObtenerDatosDolarSi.textContent = "Obtener Datos Dolar";
+                mostrarDatosDolar = false;
+            } else {
+                // Si no se están mostrando los datos, obtenerlos y mostrarlos
+                try {
+                    const datos = await getDatosDolarSi();
+                    mostrarDatosEnTarjetas(datos);
+                    botonObtenerDatosDolarSi.textContent = "Ocultar Datos Dolar";
+                    mostrarDatosDolar = true;
+                    
+                    // Mostrar el toast cuando se hace clic en el botón
+                    var liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
+                    liveToast.show();
+                } catch (error) {
+                }
+            }
+        });
+    </script>
+
+<footer>
+    <h2>Yago Paggi</h2>
+</footer>
+</body>
+</html>
