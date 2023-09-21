@@ -5,21 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProyectoFinal-Paggi Yago</title>
 
+    <!-- Enlaces a los archivos de Bootstrap y Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-oT5M3v8Z2bhJHRfZf1z7I2KKoP9f9roF7CwF/ppJ5z9tuP0l5C5g5Q6daE5F5G5g5" crossorigin="anonymous">
 
+    <!-- Enlace al archivo CSS personalizado -->
     <link rel="stylesheet" type="text/css" href="style.css"> 
 </head>
 <body>
-    <nav class="navbar bg-body-tertiary">
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
         <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">Proyecto Final</span>
+          <a class="navbar-brand" href="#">Yago Paggi</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+            </ul>
+          </div>
         </div>
     </nav>
-    
-    <div class="container text-center">
 
+    <!-- Contenido principal -->
+    <div class="container text-center">
+        <!-- Carrusel de imágenes -->
         <div id="carouselExample" class="carousel slide" style="margin: 20px;">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -29,7 +43,7 @@
                     <img src="./img/dolar.jpeg" class="d-block mx-auto" style="width: 1000px; border-radius: 5%;" alt="2">
                 </div>
                 <div class="carousel-item">
-                    <img src="./img/rollo.jpeg" class="d-block mx-auto" style="width: 1000px;  border-radius: 5%;" alt="3">
+                    <img src="./img/rollo.jpeg" class="d-block mx-auto" style="width: 1000px; border-radius: 5%;" alt="3">
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -42,17 +56,19 @@
             </button>
         </div>
         
-        
+        <!-- Sección de obtención de datos -->
         <div class="row">
             <div class="col-12">
                 <button type="button" class="btn btn-dark" id="obtenerDatosDolarSi">Obtener Datos Dolar</button>
                 <p id="resultado"></p>
                 
+                <!-- Lista de datos obtenidos -->
                 <div class="row" id="listaDatosDolarSi"></div>
             </div>
         </div>
     </div>
 
+    <!-- Toast para notificar la obtención de datos -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -60,80 +76,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Obtuviste el valor de los Dolares Actualizado al Instante!,mira debajo...
+                Obtuviste el valor de los Dólares Actualizado al Instante!, mira debajo...
             </div>
         </div>
     </div>
 
-    <script>
-        let mostrarDatosDolar = false;
+    <!-- Formulario para ingresar la cantidad en pesos -->
+    <div class="container">
+        <div class="input-group mb-3">
+            <label for="pesosInput" class="input-group-text">Ingrese la cantidad en pesos:</label>
+            <input type="number" id="pesosInput" class="form-control" placeholder="Ingrese la cantidad en pesos">
+            <button onclick="calcularDolares()" class="btn btn-primary">Calcular</button>
+        </div>
+        <!-- Resultado del cálculo en dólares -->
+        <div id="resultadoDolares"></div>
+    </div>
 
-        async function getDatosDolarSi() {
-            try {
-                const response = await fetch("https://www.dolarsi.com/api/api.php?type=valoresprincipales");
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Dolares',data)
-                    return data;
-                } else {
-                    throw new Error("Error al obtener los datos de DolarSi");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                throw error;
-            }
-        }
+    <!-- Script de JavaScript -->
+    <script src="index.js"></script>
 
-        function mostrarDatosEnTarjetas(datos) {
-            const listaDatosDolarSi = document.getElementById("listaDatosDolarSi");
-            listaDatosDolarSi.innerHTML = "";
-
-            datos.forEach((dato) => {
-                const card = document.createElement("div");
-                card.className = "col-md-4"; 
-
-                const cardHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">${dato.casa.nombre}</h5>
-                            <p class="card-text">Venta: ${dato.casa.venta}</p>
-                        </div>
-                    </div>
-                `;
-
-                card.innerHTML = cardHTML;
-                listaDatosDolarSi.appendChild(card);
-            });
-        }
-
-        const botonObtenerDatosDolarSi = document.getElementById("obtenerDatosDolarSi");
-
-        botonObtenerDatosDolarSi.addEventListener("click", async () => {
-            if (mostrarDatosDolar) {
-                // Si se están mostrando los datos, ocultarlos
-                const listaDatosDolarSi = document.getElementById("listaDatosDolarSi");
-                listaDatosDolarSi.innerHTML = "";
-                botonObtenerDatosDolarSi.textContent = "Obtener Datos Dolar";
-                mostrarDatosDolar = false;
-            } else {
-                // Si no se están mostrando los datos, obtenerlos y mostrarlos
-                try {
-                    const datos = await getDatosDolarSi();
-                    mostrarDatosEnTarjetas(datos);
-                    botonObtenerDatosDolarSi.textContent = "Ocultar Datos Dolar";
-                    mostrarDatosDolar = true;
-                    
-                    // Mostrar el toast cuando se hace clic en el botón
-                    var liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
-                    liveToast.show();
-                } catch (error) {
-                }
-            }
-        });
-    </script>
-
-<footer>
-    <h2>Yago Paggi</h2>
-</footer>
+    <!-- Pie de página -->
+    <footer class="bg-dark text-white py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Contacto</h2>
+                    <p>¡Estoy aquí para ayudarte!</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h2>Sígueme en las redes</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="https://www.facebook.com" class="text-white text-decoration-none">Facebook</a></li>
+                        <li><a href="https://www.twitter.com" class="text-white text-decoration-none">Twitter</a></li>
+                        <li><a href="https://www.instagram.com" class="text-white text-decoration-none">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
